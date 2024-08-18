@@ -1,23 +1,24 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 const dotenv = require('dotenv');
 
 dotenv.config();
 
 const dbUrl = process.env.DATABASE_URL;
 
-const connection = mysql.createConnection({
-  uri: dbUrl,
-  ssl: {
-    rejectUnauthorized: true
-  }
-});
-
-connection.connect((err) => {
-  if (err) {
+async function createConnection() {
+  try {
+    const connection = await mysql.createConnection({
+      uri: dbUrl,
+      ssl: {
+        rejectUnauthorized: true
+      }
+    });
+    console.log('Connected to the TiDB database.');
+    return connection;
+  } catch (err) {
     console.error('Error connecting to the database:', err.message);
-    return;
+    throw err;
   }
-  console.log('Connected to the TiDB database.');
-});
+}
 
-module.exports = connection;
+module.exports = createConnection;
