@@ -4,15 +4,13 @@ const articleRoutes = require('./routes/articles');
 const chatbotRoutes = require('./routes/chatbot'); 
 const app = express();
 const PORT = process.env.PORT || 5000;
-require('dotenv').config();
 
 app.use(express.json());  // Middleware to parse JSON bodies
 
 const cors = require('cors');
 app.use(cors());
-require('dotenv').config();
 
-app.use('/article', articleRoutes);  // Use the routes
+app.use('/api/article', articleRoutes);  // Use the routes
 app.use('/chatbot', chatbotRoutes);  // Use the routes
 
 app.get('/', (req, res) => {

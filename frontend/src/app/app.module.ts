@@ -6,12 +6,14 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { TimelineComponent } from './timeline/timeline.component';
 import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
+import { ChatbotComponent } from './chatbot/chatbot.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    TimelineComponent
+    TimelineComponent,
+    ChatbotComponent
   ],
   imports: [
     BrowserModule,

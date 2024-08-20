@@ -1,0 +1,335 @@
+{
+  "settings": {
+    "languages": [
+      "en"
+    ],
+    "tag": "nlp",
+    "threshold": 0.5,
+    "autoLoad": true,
+    "autoSave": true,
+    "modelFileName": "model.nlp",
+    "executeActionsBeforeAnswers": false,
+    "calculateSentiment": true
+  },
+  "nluManager": {
+    "settings": {
+      "tag": "nlu-manager"
+    },
+    "locales": [
+      "en"
+    ],
+    "languageNames": {},
+    "domainManagers": {
+      "en": {
+        "settings": {
+          "locale": "en",
+          "trainByDomain": false,
+          "tag": "domain-manager-en",
+          "nluByDomain": {
+            "default": {
+              "className": "NeuralNlu",
+              "settings": {}
+            }
+          },
+          "useStemDict": true
+        },
+        "stemDict": {
+          "about,is,latest,news,the,what,{{company}}": {
+            "intent": "news.latest",
+            "domain": "default"
+          },
+          "about,me,on,recent,tell,the,updat,{{company}}": {
+            "intent": "news.latest",
+            "domain": "default"
+          },
+          "is,new,what,with,{{company}}": {
+            "intent": "news.latest",
+            "domain": "default"
+          },
+          "about,give,me,news,{{product}}": {
+            "intent": "news.latest",
+            "domain": "default"
+          },
+          "latest,me,on,tell,the,updat,{{product}}": {
+            "intent": "news.latest",
+            "domain": "default"
+          }
+        },
+        "intentDict": {
+          "news.latest": "default"
+        },
+        "sentences": [
+          {
+            "domain": "default",
+            "utterance": "What is the latest news about {{company}}?",
+            "intent": "news.latest"
+          },
+          {
+            "domain": "default",
+            "utterance": "Tell me about the recent updates on {{company}}.",
+            "intent": "news.latest"
+          },
+          {
+            "domain": "default",
+            "utterance": "What is new with {{company}}?",
+            "intent": "news.latest"
+          },
+          {
+            "domain": "default",
+            "utterance": "Give me news about {{product}}.",
+            "intent": "news.latest"
+          },
+          {
+            "domain": "default",
+            "utterance": "Tell me the latest updates on {{product}}.",
+            "intent": "news.latest"
+          }
+        ],
+        "domains": {
+          "master_domain": {
+            "settings": {
+              "locale": "en",
+              "tag": "nlu-en",
+              "keepStopwords": true,
+              "nonefeatureValue": 1,
+              "nonedeltaMultiplier": 1.2,
+              "spellCheck": false,
+              "spellCheckDistance": 1,
+              "filterZeros": true,
+              "log": true
+            },
+            "features": {
+              "what": 1,
+              "is": 1,
+              "the": 1,
+              "latest": 1,
+              "news": 1,
+              "about": 1,
+              "{{company}}": 1,
+              "tell": 1,
+              "me": 1,
+              "recent": 1,
+              "updat": 1,
+              "on": 1,
+              "new": 1,
+              "with": 1,
+              "give": 1,
+              "{{product}}": 1
+            },
+            "intents": {
+              "news.latest": 1
+            },
+            "intentFeatures": {
+              "news.latest": {
+                "what": 1,
+                "is": 1,
+                "the": 1,
+                "latest": 1,
+                "news": 1,
+                "about": 1,
+                "{{company}}": 1,
+                "tell": 1,
+                "me": 1,
+                "recent": 1,
+                "updat": 1,
+                "on": 1,
+                "new": 1,
+                "with": 1,
+                "give": 1,
+                "{{product}}": 1
+              }
+            },
+            "featuresToIntent": {
+              "what": [
+                "news.latest"
+              ],
+              "is": [
+                "news.latest"
+              ],
+              "the": [
+                "news.latest"
+              ],
+              "latest": [
+                "news.latest"
+              ],
+              "news": [
+                "news.latest"
+              ],
+              "about": [
+                "news.latest"
+              ],
+              "{{company}}": [
+                "news.latest"
+              ],
+              "tell": [
+                "news.latest"
+              ],
+              "me": [
+                "news.latest"
+              ],
+              "recent": [
+                "news.latest"
+              ],
+              "updat": [
+                "news.latest"
+              ],
+              "on": [
+                "news.latest"
+              ],
+              "new": [
+                "news.latest"
+              ],
+              "with": [
+                "news.latest"
+              ],
+              "give": [
+                "news.latest"
+              ],
+              "{{product}}": [
+                "news.latest"
+              ]
+            },
+            "neuralNetwork": {
+              "settings": {
+                "locale": "en",
+                "tag": "nlu-en",
+                "keepStopwords": true,
+                "nonefeatureValue": 1,
+                "nonedeltaMultiplier": 1.2,
+                "spellCheck": false,
+                "spellCheckDistance": 1,
+                "filterZeros": true,
+                "log": true
+              },
+              "features": [
+                "what",
+                "is",
+                "the",
+                "latest",
+                "news",
+                "about",
+                "{{company}}",
+                "tell",
+                "me",
+                "recent",
+                "updat",
+                "on",
+                "new",
+                "with",
+                "give",
+                "{{product}}"
+              ],
+              "intents": [
+                "news.latest"
+              ],
+              "perceptrons": [
+                [
+                  2.172729015350342,
+                  2.172729015350342,
+                  0.8776100873947144,
+                  0.799819827079773,
+                  1.6570802927017212,
+                  1.7335938215255737,
+                  2.2502191066741943,
+                  1.1953938007354736,
+                  3.169438362121582,
+                  0.08811510354280472,
+                  1.1953938007354736,
+                  1.1953938007354736,
+                  2.4836301803588867,
+                  2.4836301803588867,
+                  1.9721468687057495,
+                  3.091386079788208,
+                  2.6751160870073463
+                ]
+              ]
+            }
+          }
+        }
+      }
+    },
+    "intentDomains": {},
+    "extraSentences": [
+      [
+        "en",
+        "What is the latest news about {{company}}?"
+      ],
+      [
+        "en",
+        "Tell me about the recent updates on {{company}}."
+      ],
+      [
+        "en",
+        "What is new with {{company}}?"
+      ],
+      [
+        "en",
+        "Give me news about {{product}}."
+      ],
+      [
+        "en",
+        "Tell me the latest updates on {{product}}."
+      ]
+    ]
+  },
+  "ner": {
+    "settings": {
+      "tag": "ner",
+      "entityPreffix": "%",
+      "entitySuffix": "%"
+    },
+    "rules": {
+      "en": {
+        "company": {
+          "name": "company",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "Google",
+              "texts": [
+                "Google"
+              ]
+            },
+            {
+              "option": "Apple",
+              "texts": [
+                "Apple"
+              ]
+            }
+          ]
+        },
+        "product": {
+          "name": "product",
+          "type": "enum",
+          "rules": [
+            {
+              "option": "Gemini",
+              "texts": [
+                "Gemini"
+              ]
+            },
+            {
+              "option": "iPhone",
+              "texts": [
+                "iPhone"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "nlgManager": {
+    "settings": {
+      "tag": "nlg-manager"
+    },
+    "responses": {}
+  },
+  "actionManager": {
+    "settings": {
+      "tag": "action-manager"
+    },
+    "actions": {}
+  },
+  "slotManager": {}
+}

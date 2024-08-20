@@ -5,7 +5,6 @@ import { TimelineComponent } from './timeline/timeline.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
-  { path: 'timeline', component: TimelineComponent },
   { path: '**', redirectTo: '' }  // Wildcard route for a 404 page
 ];
 

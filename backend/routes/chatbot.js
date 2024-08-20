@@ -1,109 +1,109 @@
 const express = require('express');
 const router = express.Router();
 const createConnection = require('../db'); // Database connection
-const axios = require('axios');
-const generateEmbeddings = require('../generate_embeddings');
-const nlp = require('compromise'); // or use spaCy via a Python script
+const natural = require('natural');
+const generateEmbeddings = require('../utils/generateEmbeddings');
+const cosineSimilarity = require('../utils/cosineSimilarity');
+const { NlpManager } = require('node-nlp');
 
-// Middleware to parse JSON requests
-router.use(express.json());
+const manager = new NlpManager({ languages: ['en'] });
 
-// Endpoint to handle user queries
-// router.post('/chat', async (req, res) => {
-//     try {
-//         const userMessage = req.body.message;
-//         if (!userMessage) {
-//             return res.status(400).json({ error: 'Message parameter is required' });
-//         }
+router.get('/chat', async (req, res) => {
+    const query = req.query.q;
+    if (!query) {
+        return res.status(400).json({ error: 'Query parameter is required' });
+    }
 
-//         // Extract keywords or entities from the userMessage
-//         const { entity, question } = parseUserMessage(userMessage);
-
-//         // Fetch relevant news data
-//         const results = await fetchNewsData(entity, question);
-//         res.json(results);
-//     } catch (error) {
-//         console.error('Error handling chat request:', error.message);
-//         res.status(500).json({ error: 'Internal server error' });
-//     }
-// });
-
-// function parseUserMessage(message) {
-//     // Implement a basic entity extraction or keyword-based parsing
-//     // Example: Simple keyword extraction
-//     // This can be improved with more sophisticated NLP techniques
-//     const entity = extractEntity(message);
-//     const question = message;
-//     return { entity, question };
-// }
-
-// function extractEntity(message) {
-//     // Basic entity extraction logic
-//     // Example: Extract entity based on known patterns
-//     if (message.includes('republicans')) return 'Donald Trump'; // Simplified example
-//     return 'General';
-// }
-
-// async function fetchNewsData(entity, question) {
-//     const connection = await createConnection();
-//     const [rows] = await connection.query(
-//         `SELECT headline, lead_paragraph, snippet
-//          FROM news
-//          WHERE headline LIKE ? OR lead_paragraph LIKE ? OR snippet LIKE ?`,
-//         [`%${entity}%`, `%${entity}%`, `%${entity}%`]
-//     );
-//     return rows;
-// }
-
-router.post('/ask', async (req, res) => {
     try {
-        const question = req.body.question;
-        if (!question) {
-            return res.status(400).json({ error: 'Question parameter is required' });
-        }
+        // Step 1: Preprocess the query with NLP enhancements
+        const { cleanedQuery, entities } = preprocessQuery(query);
 
-        // Extract entities and keywords from the question
-        const { entities, keywords } = extractEntitiesAndKeywords(question);
+        // Optionally use entities in your search logic
+        const queryEmbedding = await generateEmbeddings(cleanedQuery);
 
-        // Connect to the database
         const connection = await createConnection();
+        const [rows] = await connection.query('SELECT _id, title, description, content, pub_date, embedding FROM news ORDER BY pub_date DESC');        
 
-        // Find relevant articles
-        const articles = await findRelevantArticles(connection, entities, keywords);
+        // Filter and process as before
+        const validRows = rows.filter(row => 
+            row.title && 
+            row.description && 
+            row.content && 
+            row.pub_date && 
+            row.embedding
+        );
 
-        // Generate a response
-        const response = generateResponseFromArticles(articles);
+        const results = validRows.map(row => {
+            let articleEmbedding;
+            try {
+                const embeddingString = String(row.embedding).trim();
+                const jsonString = `[${embeddingString}]`;
+                articleEmbedding = JSON.parse(jsonString);
+            } catch (jsonError) {
+                console.error(`Error parsing embedding for _id ${row._id}:`, jsonError.message);
+                return null;
+            }
 
-        res.json({ response });
+            const similarity = cosineSimilarity(queryEmbedding, articleEmbedding);
+            return { ...row, similarity };
+        }).filter(result => result && result.similarity > 0.8)
+          .sort((a, b) => new Date(b.pub_date) - new Date(a.pub_date));
+
+        const response = generateResponse(results);
+        res.json(response);
     } catch (error) {
-        console.error('Error during question processing:', error.message);
+        console.error('Error during search:', error.message);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
 
-function extractEntitiesAndKeywords(question) {
-    const doc = nlp(question);
-    // Extract entities and keywords (simplified example)
-    const entities = doc.people().out('array');
-    const keywords = doc.nouns().out('array');
-    return { entities, keywords };
+
+function extractEntities(query) {
+    const entities = [];
+    const tokenizer = new natural.WordTokenizer();
+    const tokens = tokenizer.tokenize(query);
+
+    // Simple entity extraction (e.g., looking for capitalized words)
+    tokens.forEach(token => {
+        if (/[A-Z]/.test(token[0])) {
+            entities.push(token);
+        }
+    });
+
+    return entities;
 }
 
-async function findRelevantArticles(connection, entities, keywords) {
-    const query = `
-        SELECT _id, headline, abstract, lead_paragraph
-        FROM news
-        WHERE MATCH(headline, abstract, lead_paragraph) AGAINST(? IN BOOLEAN MODE);
-    `;
-    const [rows] = await connection.query(query, [keywords.join(' ')]);
-    return rows;
+function preprocessQuery(query) {
+    // Step 1: Basic preprocessing
+    const cleanedQuery = query.toLowerCase().replace(/[^\w\s]/gi, '').trim();
+
+    // Step 2: Extract entities
+    const entities = extractEntities(query);
+
+    return { cleanedQuery, entities };
 }
 
-function generateResponseFromArticles(articles) {
-    if (articles.length === 0) return 'No relevant information found.';
+function generateResponse(relevantArticles) {
+    if (relevantArticles.length === 0) {
+        return { message: 'No relevant articles found.' };
+    }
 
-    // Basic response generation
-    return articles.map(article => `${article.headline}: ${article.abstract}`).join('\n');
+    // Select the top 3 articles
+    const topArticles = relevantArticles.slice(0, 3);
+
+    // Create a response object
+    const response = topArticles.map(article => ({
+        _id: article._id,
+        title: article.title,
+        description: article.description,
+        pub_date: article.pub_date,
+        url: article.url,
+        similarity: article.similarity,
+        snippet: article.content.substring(0, 200) + '...', // Short snippet of the content
+    }));
+
+    return response;
 }
+
 
 module.exports = router;

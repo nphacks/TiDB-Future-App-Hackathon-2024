@@ -3,12 +3,12 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const dbUrl = process.env.NEWS_DATABASE_URL;
+const dbUrl = process.env.DATABASE_URL;
 
 async function createConnection() {
   try {
     const connection = await mysql.createConnection({
-      uri: 'mysql://2FcL9BJcF2khzGy.root:jgg7KvrqrhrcmkZ3@gateway01.us-east-1.prod.aws.tidbcloud.com:4000/news_api_db?ssl={"rejectUnauthorized":true}',
+      uri: dbUrl,
       ssl: {
         rejectUnauthorized: true
       }
