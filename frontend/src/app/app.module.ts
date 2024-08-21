@@ -2,11 +2,15 @@ import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatInputModule } from '@angular/material/input';
+
+
 import { AppComponent } from './app.component';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { HomeComponent } from './home/home.component';
-import { TimelineComponent } from './timeline/timeline.component';
-import { HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
-import { ChatbotComponent } from './chatbot/chatbot.component';
+import { TimelineComponent } from './components/timeline/timeline.component';
+import { ChatbotComponent } from './components/chatbot/chatbot.component';
 
 @NgModule({
   declarations: [
@@ -18,11 +22,12 @@ import { ChatbotComponent } from './chatbot/chatbot.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    MatTabsModule,
+    MatInputModule
   ],
   providers: [
     provideClientHydration(),
-    provideHttpClient(withFetch())  // Configure HttpClient to use fetch
+    provideAnimationsAsync()
   ],
   bootstrap: [AppComponent]
 })

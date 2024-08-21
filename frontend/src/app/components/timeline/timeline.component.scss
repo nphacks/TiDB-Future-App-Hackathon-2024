@@ -1,0 +1,122 @@
+.container {
+    position: relative;
+    min-height: 200px;
+    width: 90vw;
+    margin: 50px auto;
+    overflow: hidden;
+    transition: all 0.5s ease;
+}
+
+.search-news {
+    position: absolute;
+    top: 0;
+    width: 30vw;
+    min-width: 500px;
+    min-height: 200px;
+    z-index: 2;
+    right: 50%;
+    transform: translateX(50%);
+}
+
+.search-div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.news-searchbar {
+    padding: 10px;
+    border-radius: 5px 0 0 5px;
+    min-width: 450px;
+    width: 90%;
+    height: 50px;
+    border: 1px solid #673ab7;
+}
+
+.search-button {
+    height: 50px;
+    min-width: 50px;
+    width: 10%;
+    border: 0;
+    border-radius: 0 5px 5px 0;
+    font-size: 15px;
+    color: #fff;
+    background-color: #673ab7;
+}
+
+.news-div {
+    min-width: 500px;
+    width: 100%;
+    min-height: 650px;
+    height: 65vh;
+    margin: 20px 0 0 0;
+    background-color: rgba(104, 58, 183, 0.05);
+    transition: all 0.5s ease; /* Smooth transition for all changes */
+}
+
+.news-timeline  {
+    position: absolute;
+    top: 0;
+    width: 50vw;
+    min-width: 600px;
+    min-height: 800px;
+    height: 75vh;
+    z-index: 1;
+    left: 50%;
+    transform: translateX(-50%);
+    overflow-y: auto;
+    overflow-x: auto; 
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start; 
+    direction: rtl; 
+    white-space: nowrap; 
+    scroll-behavior: smooth; 
+    background-color: rgba(104, 58, 183, 0.05);
+}
+
+.item {
+    min-width: 250px; 
+    height: 100%;
+    text-align: center;
+}
+
+/* Optional: Inverting the scrolling direction */
+.news-timeline::-webkit-scrollbar {
+    direction: ltr;
+}
+
+.green-timeline-row {
+    height: 5px;
+    margin-top: 10px;
+    background-color: green;
+}
+
+.orange-timeline-row {
+    height: 5px;
+    margin-top: 10px;
+    background-color: orangered;
+}
+
+.yellow-timeline-row {
+    height: 5px;
+    margin-top: 10px;
+    background-color: yellow;
+}
+
+.fa-arrow-down {
+    color: #673ab7;
+}
+
+.news-timeline-card {
+    height: 250px;
+    padding: 10px;
+}
+
+.news-card {
+    background-color: #fff;
+    height: 100%;
+    width: 100%;
+    border: 1px solid black;
+}

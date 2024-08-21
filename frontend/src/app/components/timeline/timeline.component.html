@@ -1,0 +1,76 @@
+<div class="container" [@containerAnimation]="containerState">
+    <div [@moveLeft]="leftState" class="news-timeline">
+        <div *ngIf="timelineActivate" class="item">
+            <div class="green-timeline-row"></div>
+            <i class="fa-solid fa-arrow-down"></i>
+            <div class="news-timeline-card">
+                <div class="news-card">
+                    <div>News Date</div>
+                    <div>News Title</div>
+                </div>
+            </div>
+            <div class="orange-timeline-row"></div>
+            <i class="fa-solid fa-arrow-down"></i>
+            <div class="news-timeline-card">News</div>
+            <div class="yellow-timeline-row"></div>
+            <i class="fa-solid fa-arrow-down"></i>
+            <div class="news-timeline-card">News</div>
+        </div>
+        <div *ngIf="timelineActivate" class="item">
+            <div class="green-timeline-row"></div>
+            <i class="fa-solid fa-arrow-down"></i>
+            <div class="news-timeline-card">News</div>
+            <div class="orange-timeline-row"></div>
+            <i class="fa-solid fa-arrow-down"></i>
+            <div class="news-timeline-card">News</div>
+            <div class="yellow-timeline-row"></div>
+            <i class="fa-solid fa-arrow-down"></i>
+            <div class="news-timeline-card">News</div>
+        </div>
+        <div *ngIf="timelineActivate" class="item">
+            <div class="green-timeline-row"></div>
+            <i class="fa-solid fa-arrow-down"></i>
+            <div class="news-timeline-card">News</div>
+            <div class="orange-timeline-row"></div>
+            <i class="fa-solid fa-arrow-down"></i>
+            <div class="news-timeline-card">News</div>
+            <div class="yellow-timeline-row"></div>
+            <i class="fa-solid fa-arrow-down"></i>
+            <div class="news-timeline-card">News</div>
+        </div>
+        <div *ngIf="timelineActivate" class="item">
+            <div class="green-timeline-row"></div>
+            <i class="fa-solid fa-arrow-down"></i>
+            <div class="news-timeline-card">News</div>
+            <div class="orange-timeline-row"></div>
+            <i class="fa-solid fa-arrow-down"></i>
+            <div class="news-timeline-card">News</div>
+            <div class="yellow-timeline-row"></div>
+            <i class="fa-solid fa-arrow-down"></i>
+            <div class="news-timeline-card">News</div>
+        </div>
+        <div *ngIf="timelineActivate" class="item">
+            <div class="green-timeline-row"></div>
+            <i class="fa-solid fa-arrow-down"></i>
+            <div class="news-timeline-card">News</div>
+            <div class="orange-timeline-row"></div>
+            <i class="fa-solid fa-arrow-down"></i>
+            <div class="news-timeline-card">News</div>
+            <div class="yellow-timeline-row"></div>
+            <i class="fa-solid fa-arrow-down"></i>
+            <div class="news-timeline-card">News</div>
+        </div>
+    </div>
+    <div [@moveRight]="rightState" class="search-news">
+        <div class="search-div">
+            <input type="search" class="news-searchbar" placeholder="Search for news" />
+            <button class="search-button" (click)="searchNews()"><i class="fa fa-search search-icon"></i></button>
+        </div>
+        <div *ngIf="newsActivate === true" class="news-div">
+            News
+            <button (click)="displayTimeline()">Timeline</button>
+        </div>
+    </div>
+    <!-- <button (click)="animateMove()">Animate Up</button>
+    <button (click)="animateLeftRight()">Animate Left/Right</button> -->
+</div>
