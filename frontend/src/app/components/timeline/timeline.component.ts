@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { TimelineService } from '../../services/timeline.service';
 
 @Component({
   selector: 'app-timeline',
@@ -36,11 +37,38 @@ export class TimelineComponent {
   leftState = 'hidden';
   rightState = 'hidden';
   containerState = 'initial';
+  searchNewsText = ''
+  newsArticle: any;
+  newsTimelineActicles: any;
+
+  constructor(private timelineService: TimelineService) {}
+
+  test = {
+    "article": {
+        "source": {
+            "id": null,
+            "name": "Digital Journal"
+        },
+        "author": "AFP",
+        "title": "New ‘Call of Duty’ and ‘Borderlands 4’ games announced at leading show",
+        "description": "The announcements set the scene for the leading international video game show that opens to the public in Cologne on Thursday.\nThe post New ‘Call of Duty’ and ‘Borderlands 4’ games announced at leading show appeared first on Digital Journal.",
+        "url": "https://www.digitaljournal.com/entertainment/new-call-of-duty-and-borderlands-4-games-announced-at-leading-show/article",
+        "urlToImage": "https://www.digitaljournal.com/wp-content/uploads/2024/08/5c44442cd4df6b3eb9865bc616e96e417e85c664.jpg",
+        "publishedAt": "2024-08-20T22:16:00Z",
+        "content": "A new \"Borderlands\" game is to be released in 2025 - Copyright AFP VALERIE MACON\r\nThe release dates for new episodes of the “Call of Duty” and “Borderlands” video games were announced Tuesday at the … [+1333 chars]"
+    }
+}
 
   searchNews() {
-    this.newsActivate = true
-    this.moveState = this.moveState === 'initial' ? 'moved' : 'initial';
-    this.containerState = this.containerState === 'initial' ? 'expanded' : 'initial';
+    this.moveState = 'moved';
+    this.containerState = 'expanded';
+    // this.newsActivate = true
+    // this.newsArticle = (this.test as any)['article']
+    this.timelineService.searchNews(this.searchNewsText).subscribe((res) => {
+      this.newsActivate = true
+      this.newsArticle = (res as any)['article']
+      console.log(this.newsArticle)
+    })
   }
 
   displayTimeline() {
@@ -48,6 +76,10 @@ export class TimelineComponent {
     this.timelineActivate = true;
     this.leftState = 'visible';
     this.rightState = 'visible';
+    this.timelineService.getTimelineNews(this.searchNewsText).subscribe((res) => {
+      this.newsTimelineActicles = (res as any)
+      console.log(this.newsTimelineActicles)
+    })
   }
   
   animateMove() {

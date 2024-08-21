@@ -3,7 +3,7 @@
       ChatBox
     </div>
     <div class="chat-div">
-      <input type="text" id="news-chatbar" placeholder="Chat with NewsTrail" [@chatBarAnimation]="chatBarState" />
+      <input type="text" id="news-chatbar" placeholder="Chat with NewsTrail" [@chatBarAnimation]="chatBarState" [(ngModel)]="chatMessage"/>
       <button (click)="openChatBox()" class="arrow-button"><i class="fa-solid fa-arrow-up"></i></button>
     </div>
   </div>

@@ -1,9 +1,9 @@
 const express = require('express');
+const latestApiArticle = require('../utils/latestAPIArticle');
+const latestDbArticle = require('../utils/latestDBArticle');
+const processTimelineArticles = require('../utils/processingTimelineArticles')
+const searchNewsInDatabase = require('../utils/searchNewsInDatabase')
 const router = express.Router();
-const createConnection = require('../db');  // Import database connection
-const storeMonthlyData = require('../utils/storeMonthlyData');
-const generateEmbeddings = require('../utils/generateEmbeddings');
-const cosineSimilarity = require('../utils/cosineSimilarity');
 require('dotenv').config();
 
 router.get('/search', async (req, res) => {
@@ -13,71 +13,69 @@ router.get('/search', async (req, res) => {
     }
 
     try {
-        const queryEmbedding = await generateEmbeddings(query);
-        const connection = await createConnection();
+        // Get the latest article from the API and database
+        const apiArticle = await latestApiArticle(query);
+        const dbArticle = await latestDbArticle(query);
+        console.log(apiArticle, dbArticle)
+        // Compare published dates
+        const latestArticle = compareArticles(apiArticle, dbArticle);
 
-        const [rows] = await connection.query('SELECT _id, title, description, content, pub_date, embedding FROM news ORDER BY pub_date DESC');        
+        // Send the latest article immediately
+        res.json({ article: latestArticle });
 
-        // Filter out rows with empty or null values
-        const validRows = rows.filter(row => 
-            row.title && 
-            row.description && 
-            row.content && 
-            row.pub_date && 
-            row.embedding
-        );
-
-        
-        // Calculate cosine similarity
-        const results = validRows.map(row => {
-            console.log('Getting isnide map')
-            let articleEmbedding;
-            try {
-                // Ensure embedding is treated as a string and parse it
-                const embeddingString = String(row.embedding).trim();
-                const jsonString = `[${embeddingString}]`;
-                articleEmbedding = JSON.parse(jsonString);
-            } catch (jsonError) {
-                console.error(`Error parsing embedding for _id ${row._id}:`, jsonError.message);
-                return null; // Skip this row if the embedding is invalid
-            }
-
-
-            const similarity = cosineSimilarity(queryEmbedding, articleEmbedding);
-            return { ...row, similarity };
-        }).filter(result => result && result.similarity > 0.8) // Filter by similarity threshold
-        .sort((a, b) => new Date(b.pub_date) - new Date(a.pub_date)); // Sort by date
-
-        res.json(results);
+        // Fetch remaining articles in the background
+        processTimelineArticles(query);
     } catch (error) {
-        console.error('Error during search:', error.message);
-        res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'An error occurred in searching for article' });
     }
 });
 
+router.get('/timeline', async (req, res) => {
+    const query = req.query.q;
+    if (!query) {
+        return res.status(400).json({ error: 'Query parameter is required' });
+    }
 
-router.get('/search/newsapi', async (req, res) => {
     try {
-        const topic = req.query.q; // Extract topic from query params
-        if (!topic) {
-            return res.status(400).json({ error: 'Topic is required' });
-        }
-        
-        await storeMonthlyData(topic); // Call the function with the topic
-        res.json({ message: 'Data stored successfully.' });
+        const searchResults = await searchNewsInDatabase(query);
+        return res.json(searchResults);
     } catch (error) {
-        console.error('Error:', error.message);
-        res.status(500).json({ error: 'Failed to store news data.' });
+        return res.status(500).json({ error: 'An error occurred in searching articles' });
     }
 });
 
-const isValidJson = (str) => {
-    try {
-        JSON.parse(str);
-        return true;
-    } catch {
-        return false;
-    }
-};
+function compareArticles(apiArticle, dbArticle) {
+    if (!apiArticle) return dbArticle;
+    if (!dbArticle) return apiArticle;
+
+    const apiDate = new Date(apiArticle.publishedAt);
+    const dbDate = new Date(dbArticle.pub_date);
+
+    return apiDate > dbDate ? apiArticle : dbArticle;
+}
+
+
+// router.get('/search/newsapi', async (req, res) => {
+//     try {
+//         const topic = req.query.q; // Extract topic from query params
+//         if (!topic) {
+//             return res.status(400).json({ error: 'Topic is required' });
+//         }
+//         await storeMonthlyData(topic); // Call the function with the topic
+//         res.json({ message: 'Data stored successfully.' });
+//     } catch (error) {
+//         console.error('Error:', error.message);
+//         res.status(500).json({ error: 'Failed to store news data.' });
+//     }
+// });
+
+// const isValidJson = (str) => {
+//     try {
+//         JSON.parse(str);
+//         return true;
+//     } catch {
+//         return false;
+//     }
+// };
 
 module.exports = router;

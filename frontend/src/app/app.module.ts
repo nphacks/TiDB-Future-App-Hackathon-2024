@@ -11,19 +11,25 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { HomeComponent } from './home/home.component';
 import { TimelineComponent } from './components/timeline/timeline.component';
 import { ChatbotComponent } from './components/chatbot/chatbot.component';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { DateFormatPipe } from './pipes/date-format.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     TimelineComponent,
-    ChatbotComponent
+    ChatbotComponent,
+    DateFormatPipe
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     MatTabsModule,
-    MatInputModule
+    MatInputModule,
+    FormsModule,
+    HttpClientModule
   ],
   providers: [
     provideClientHydration(),

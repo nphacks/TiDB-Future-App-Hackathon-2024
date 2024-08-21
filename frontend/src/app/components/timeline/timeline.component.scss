@@ -51,8 +51,52 @@
     min-height: 650px;
     height: 65vh;
     margin: 20px 0 0 0;
+    padding: 10px;
+    display: grid;
+    grid-template-columns: 50% auto;
+    grid-template-rows: 20px 20px 40px auto;
+    grid-template-areas:    'timeline-btn article-link'
+                            'date source'
+                            'title title'
+                            'text text';
+    grid-row-gap: 16px;
     background-color: rgba(104, 58, 183, 0.05);
     transition: all 0.5s ease; /* Smooth transition for all changes */
+}
+
+.news-timeline-button {
+    grid-area: timeline-btn;
+}
+
+.news-url {
+    grid-area: article-link;
+}
+
+.news-date {
+    grid-area: date;
+}
+
+.news-source {
+    grid-area: source;
+}
+
+.news-title {
+    grid-area: title;
+    grid-column: span 2;
+    margin-top: 8px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.news-text {
+    grid-area: text;
+    grid-column: span 2;
+    overflow-y: auto;
+}
+
+.news-description {
+    margin-bottom: 15px;
+    font-style: italic;
 }
 
 .news-timeline  {

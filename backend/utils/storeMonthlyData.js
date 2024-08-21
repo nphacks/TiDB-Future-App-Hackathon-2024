@@ -9,11 +9,12 @@ async function storeMonthlyData(topic) {
     try {
         const connection = await createConnection();
         
-        const monthStart = '2024-07-20'; // Example start date
-        const monthEnd = '2024-08-19'; // Example end date
+        const today = new Date();
+        const monthEnd = today.toISOString().split('T')[0];
+        const monthStart = new Date(today.setDate(today.getDate() - 30)).toISOString().split('T')[0];
 
         const response = await newsapi.v2.everything({
-            q: topic, // Use the passed topic
+            q: topic, 
             from: monthStart,
             to: monthEnd,
             language: 'en',
@@ -21,10 +22,9 @@ async function storeMonthlyData(topic) {
         });
 
         const newsArticles = response.articles;
-        console.log(response.totalResults)
         for (const article of newsArticles) {
             const articleId = crypto.createHash('sha256').update(article.url).digest('hex');
-            // Handle empty fields
+            // Handling empty fields
             const sourceId = article.source.id || null;
             const sourceName = article.source.name || null;
             const author = article.author || null;
@@ -35,10 +35,10 @@ async function storeMonthlyData(topic) {
             const pubDate = article.publishedAt || null;
             const content = article.content || null;
 
-            // Check if the article already exists
+            // Checking if the article already exists
             const [rows] = await connection.query('SELECT _id FROM news WHERE _id = ?', [articleId]);
             if (rows.length > 0) {
-                continue; // Skip if the article already exists
+                continue;
             }
 
             const embedding = await generateEmbeddings(article.content);
@@ -50,8 +50,6 @@ async function storeMonthlyData(topic) {
                 );
             }
         }
-
-        console.log('Monthly data stored successfully.');
     } catch (error) {
         console.error('Error storing monthly data:', error.message);
     }

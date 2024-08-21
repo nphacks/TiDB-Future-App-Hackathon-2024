@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { ChatbotService } from '../../services/chatbot.service';
 
 @Component({
   selector: 'app-chatbot',
@@ -21,9 +22,15 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 export class ChatbotComponent {
   chatBoxState = 'closed';
   chatBarState = 'collapsed';
+  chatMessage = ''
+
+  constructor(private timelineService: ChatbotService) {}
 
   openChatBox() {
     this.chatBoxState = this.chatBoxState === 'closed' ? 'open' : 'closed';
     this.chatBarState = this.chatBarState === 'collapsed' ? 'expanded' : 'collapsed';
+    this.timelineService.chatNews(this.chatMessage).subscribe((res) => {
+      console.log(res)
+    })
   }
 }

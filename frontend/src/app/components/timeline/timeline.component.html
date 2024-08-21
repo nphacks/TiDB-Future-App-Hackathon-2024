@@ -63,12 +63,19 @@
     </div>
     <div [@moveRight]="rightState" class="search-news">
         <div class="search-div">
-            <input type="search" class="news-searchbar" placeholder="Search for news" />
+            <input type="search" class="news-searchbar" placeholder="Search for news" [(ngModel)]="searchNewsText" />
             <button class="search-button" (click)="searchNews()"><i class="fa fa-search search-icon"></i></button>
         </div>
-        <div *ngIf="newsActivate === true" class="news-div">
-            News
-            <button (click)="displayTimeline()">Timeline</button>
+        <div *ngIf="newsActivate && newsArticle" class="news-div">
+            <div class="news-timeline-button"><button (click)="displayTimeline()">Timeline</button></div>
+            <div class="news-url"><a [href]="newsArticle?.url" target="_blank">Article Link</a></div>
+            <div class="news-date">{{(newsArticle?.publishedAt || newsArticle?.pub_date) | dateFormat }}</div>
+            <div class="news-source">{{newsArticle?.source?.name}}</div>
+            <div class="news-title">{{newsArticle?.title}}</div>
+            <div class="news-text">
+                <div class="news-description">{{newsArticle?.description}}</div>
+                <div class="news-content">{{newsArticle?.content}}</div>
+            </div>
         </div>
     </div>
     <!-- <button (click)="animateMove()">Animate Up</button>
